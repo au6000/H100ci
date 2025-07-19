@@ -17,13 +17,10 @@ RUN apt-get update && \
 # ── Core LLM tools ───────────────────────────────────────
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir \
-      triton==3.2.0 \
-      transformers==4.52.4 \
-      datasets==2.21.0 \
       deepspeed==0.17.2 \
-      accelerate==0.29.2 \
+      unsloth[cu124-ampere-torch240] \
+      unsloth-zoo \
       evaluate wandb tiktoken \
-      bitsandbytes==0.43.3 \
       packaging ninja
 
 # ── Flash‑Attention‑3 (source build) ─────────────────────
@@ -31,11 +28,6 @@ RUN git clone --depth 1 https://github.com/Dao-AILab/flash-attention.git /tmp/fl
     cd /tmp/flash-attn/hopper && \
     python setup.py install && \
     cd / && rm -rf /tmp/flash-attn
-
-# ── Unsloth 最新版 (FA3 対応) ─────────────────────────────
-RUN pip install --no-cache-dir \
-      "unsloth[cu124-ampere-torch240]" \
-      unsloth-zoo
 
 WORKDIR /workspace
 COPY ds_zero3_nvme.json /workspace/
